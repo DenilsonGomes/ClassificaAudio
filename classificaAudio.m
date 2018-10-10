@@ -3,6 +3,10 @@
 % Processamento Digital de Sinais
 % Script para classificar os audios (sim e nao)
 
+clear
+clc
+close all
+
 %Carrega os audios
 [n1,Fn1] = audioread('nao (1).wav');
 [n2,Fn2] = audioread('nao (2).wav');
@@ -41,23 +45,23 @@ S3 = fftshift(fft(s3));
 S4 = fftshift(fft(s4));
 S5 = fftshift(fft(s5));
 
-%Plota o modulo das TF dos audios
+%Plota o modulo das TF dos audios (1 Sim e 1 Nao)
 freq_vec = linspace(-pi,pi,length(N1));
-figure,plot(freq_vec,abs(N1))
-title('Transformada de Foutier do Nao') %Titulo
+figure,plot(freq_vec,abs(N1)) %Transformada de Fourier do Nao
+title('Transformada de Foutier do Nao1') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
 freq_vec = linspace(-pi,pi,length(S1));
-figure,plot(freq_vec,abs(S1))
-title('Transformada de Foutier do Sim') %Titulo
+figure,plot(freq_vec,abs(S1))% Plota TF do Sim
+title('Transformada de Foutier do Sim1') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-%Gera filtro
+%Gera filtro (de acordo com a visualização dos audios na frequencia)
 wc1 = 1; %Frquencia final
-[B,A] = butter(20, wc1/pi, 'high');
-[H,W] = freqz(B,A,length(y));
+[B,A] = butter(20, wc1/pi, 'high'); %Filtro passa-alta
+[H,W] = freqz(B,A,length(n1));
 figure,plot(W,abs(H)) %Plota filtro Passa-alta
 title('Transformada de Fourier do Filtro') %Titulo
 ylabel('Espectro de magnitude') %legenda
@@ -66,92 +70,201 @@ xlabel('Frequencia em Rad/s') %legenda
 %Filtar os sinais
 %audio nao
 n1f = filter(B,A,n1); %Sinal filtrado
-%figure,plot(real(n1f)) %Plota o sinal filtrado
-title('Sinal Filtrado no tempo') %Titulo
-ylabel('Amplitude do Sinal Filtrado') %legenda
-xlabel('Tempo discreto') %legenda
 
 N1f = fftshift(fft(n1f)); %TF centrada no zero do sinal filtrado
 freq_vec = linspace(-pi,pi,length(N1f)); %Frequencias
 figure,plot(freq_vec,abs(N1f)) %Plota TF do sinal filtrado
-title('Transformada de Foutier do Sinal Filtrado') %Titulo
+title('Transformada de Foutier do Nao1 Filtrado') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-SNP = sum((abs(N1f)).^2)/length(N1f);
+SNN = sum((abs(N1f)).^2)/length(N1f); %soma normalizada do Nao
 
 n2f = filter(B,A,n2); %Sinal filtrado
-%figure,plot(real(n1f)) %Plota o sinal filtrado
-title('Sinal Filtrado no tempo') %Titulo
-ylabel('Amplitude do Sinal Filtrado') %legenda
-xlabel('Tempo discreto') %legenda
 
 N2f = fftshift(fft(n2f)); %TF centrada no zero do sinal filtrado
 freq_vec = linspace(-pi,pi,length(N2f)); %Frequencias
 figure,plot(freq_vec,abs(N2f)) %Plota TF do sinal filtrado
-title('Transformada de Foutier do Sinal Filtrado') %Titulo
+title('Transformada de Foutier do Nao2 Filtrado') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-SNP = SNP + sum((abs(N2f)).^2)/length(N2f);
+SNN = SNN + sum((abs(N2f)).^2)/length(N2f); %Soma normalizada do Nao
 
-MNP = SNP/2;
+MNN = SNN/2; %Media normalizada do Nao
 
 %audio sim
-s1f = filter(B,A,s1); %Sinal filtrado
-%figure,plot(real(n1f)) %Plota o sinal filtrado
-title('Sinal Filtrado no tempo') %Titulo
-ylabel('Amplitude do Sinal Filtrado') %legenda
-xlabel('Tempo discreto') %legenda
+s1f = filter(B,A,s1); %Sim filtrado
 
 S1f = fftshift(fft(s1f)); %TF centrada no zero do sinal filtrado
 freq_vec = linspace(-pi,pi,length(S1f)); %Frequencias
 figure,plot(freq_vec,abs(S1f)) %Plota TF do sinal filtrado
-title('Transformada de Foutier do Sinal Filtrado') %Titulo
+title('Transformada de Foutier do Sim1 Filtrado') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-SSP = sum((abs(S1f)).^2)/length(S1f);
+SNS = sum((abs(S1f)).^2)/length(S1f); %Soma normalizada do Sim
 
 s2f = filter(B,A,s2); %Sinal filtrado
-%figure,plot(real(n1f)) %Plota o sinal filtrado
-title('Sinal Filtrado no tempo') %Titulo
-ylabel('Amplitude do Sinal Filtrado') %legenda
-xlabel('Tempo discreto') %legenda
 
 S2f = fftshift(fft(s2f)); %TF centrada no zero do sinal filtrado
 freq_vec = linspace(-pi,pi,length(S2f)); %Frequencias
 figure,plot(freq_vec,abs(S2f)) %Plota TF do sinal filtrado
-title('Transformada de Foutier do Sinal Filtrado') %Titulo
+title('Transformada de Foutier do Sim2 Filtrado') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-SSP = SSP + sum((abs(S2f)).^2)/length(S2f);
+SNS = SNS + sum((abs(S2f)).^2)/length(S2f); %Soma normalizada do Sim
 
-MSP = SSP/2;
+MNS = SNS/2; %Media normalizada do Sim
 
 %Testar os audios
-[nt1,Fnt] = audioread('sim teste 4.wav');
+acertos = 0;
+%Audio Nao 1
+[nt,Fnt] = audioread('nao teste 1.wav');
 
-nt1 = nt1(:,1);
+nt = nt(:,1);
 
-nt1f = filter(B,A,nt1); %Sinal filtrado
-%figure,plot(real(n1f)) %Plota o sinal filtrado
-title('Sinal Filtrado no tempo') %Titulo
-ylabel('Amplitude do Sinal Filtrado') %legenda
-xlabel('Tempo discreto') %legenda
+nt1f = filter(B,A,nt); %Sinal filtrado
 
 Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
 freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
 figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
-title('Transformada de Foutier do Sinal Filtrado') %Titulo
+title('Transformada de Foutier do nao teste 1 Filtrado') %Titulo
 ylabel('Espectro de magnitude') %legenda
 xlabel('Frequencia em Rad/s') %legenda
 
-MNT1 = sum(abs(Nt1f).^2)/length(Nt1f)
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
 
-if MNT1 < 1
+if MNT < 1
     disp('Não')
-else
-    disp('Sim')
+    acertos = acertos + 1;
 end
+
+%Audio Nao 2
+[nt,Fnt] = audioread('nao teste 2.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do nao teste 2 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT < 1
+    disp('Não')
+    acertos = acertos + 1;
+end
+
+%Audio Nao 3
+[nt,Fnt] = audioread('nao teste 3.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do nao teste 3 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT < 1
+    disp('Não')
+    acertos = acertos + 1;
+end
+
+%Audio Sim 1
+[nt,Fnt] = audioread('sim teste 1.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do sim teste 1 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT > 1
+    disp('Sim')
+    acertos = acertos + 1;
+end
+
+%Audio Sim 2
+[nt,Fnt] = audioread('sim teste 2.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do sim teste 2 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT > 1
+    disp('Sim')
+    acertos = acertos + 1;
+end
+
+%Audio Sim 3
+[nt,Fnt] = audioread('sim teste 3.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do sim teste 3 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT > 1
+    disp('Sim')
+    acertos = acertos + 1;
+end
+
+%Audio Sim 4
+[nt,Fnt] = audioread('sim teste 4.wav');
+
+nt = nt(:,1);
+
+nt1f = filter(B,A,nt); %Sinal filtrado
+
+Nt1f = fftshift(fft(nt1f)); %TF centrada no zero do sinal filtrado
+freq_vec = linspace(-pi,pi,length(Nt1f)); %Frequencias
+figure,plot(freq_vec,abs(Nt1f)) %Plota TF do sinal filtrado
+title('Transformada de Foutier do sim teste 4 Filtrado') %Titulo
+ylabel('Espectro de magnitude') %legenda
+xlabel('Frequencia em Rad/s') %legenda
+
+MNT = sum(abs(Nt1f).^2)/length(Nt1f) %Media normalizada (do modulo da TF) do teste 
+
+if MNT > 1
+    disp('Sim')
+    acertos = acertos + 1;
+end
+disp('Percentual de acerto obtido: ')
+acertos/7
