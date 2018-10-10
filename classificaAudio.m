@@ -266,5 +266,10 @@ if MNT > 1
     disp('Sim')
     acertos = acertos + 1;
 end
-disp('Percentual de acerto obtido: ')
-acertos/7
+
+str = ['Percentual de acerto obtido: ', num2str(acertos*100/7)];
+disp(str); %exibe a mensagem acima com o valor
+
+% Observando os modulos da Transformada de Fourier de cada audio podemos notar
+% que o audio "sim teste 4" é bem proximo do audio "nao teste 1", por isso este 
+% audio "sim teste 4" nao foi classificado com exito
