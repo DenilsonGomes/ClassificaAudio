@@ -1,7 +1,7 @@
 % Autor: Denilson Gomes Vaz da Silva
 % Departamento de Engenharia de Computação
 % Processamento Digital de Sinais
-% Script para classificar os audios (sim e nao)
+% Script para classificar os audios (Sim e Nao)
 
 clear
 clc
